@@ -12,7 +12,6 @@ import com.leo.project.objects.NumericQuestion
 import com.leo.project.objects.ProseQuestion
 import com.leo.project.objects.Question
 import com.leo.project.util.COULD_NOT_READ
-import com.leo.project.util.EMPTY_MESSAGE
 import java.util.logging.*
 
 /**
@@ -33,7 +32,6 @@ class DiscussionTopic @JvmOverloads constructor(private val question: Question,
         //FIXME: Reduce redundancy and refactor answer object model
         when (answer) {
             is UserAnswer.Invalid -> logProblematicAnswer(answer.exception)
-            is UserAnswer.Empty -> return reachAgreementAndReturnAnswer()
             is BooleanAnswer.Invalid -> return logReadProblemAndRetry(answer.exception)
             is NumericAnswer.InvalidNumber -> return logReadProblemAndRetry(answer.exception)
 
