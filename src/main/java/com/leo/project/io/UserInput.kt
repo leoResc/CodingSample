@@ -1,5 +1,8 @@
 package com.leo.project.io
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.*
 import java.util.logging.*
 
@@ -17,17 +20,19 @@ class UserInput(private val scanner: Scanner = Scanner(System.`in`)) : InputRead
 
     override fun readBoolean(): BooleanAnswer { //FIXME: In this mode, user cant ask for help or exit app
         return try {
+            clearScannerBuffer()
             val readValue = scanner.nextBoolean()
             BooleanAnswer.Valid(readValue)
         } catch (e: IllegalStateException) {
             BooleanAnswer.Invalid(e)
         } catch (e: NoSuchElementException) {
-            BooleanAnswer.Invalid(e) //Booleans can't and shouldn't be empty
+            BooleanAnswer.Invalid(e)
         }
     }
 
     override fun readInteger(): NumericAnswer { //FIXME: In this mode, user cant ask for help or exit app
         return try {
+            clearScannerBuffer()
             val readValue = scanner.nextInt()
             NumericAnswer.ValidInteger(readValue)
         } catch (e: IllegalStateException) {
@@ -39,24 +44,33 @@ class UserInput(private val scanner: Scanner = Scanner(System.`in`)) : InputRead
 
     override fun readEverything(): UserAnswer {
         return try {
-            exactStringAnswer(scanner.next())
+            exactStringAnswer(scanner.nextLine())
         } catch (e: IllegalStateException) {
             UserAnswer.Invalid(e)
         } catch (e: NoSuchElementException) {
             logNoInputFound(e)
-            UserAnswer.Empty
+            UserAnswer.Invalid(e)
         }
     }
 
     private fun exactStringAnswer(text: String) =
-            when {
-                text.isEmpty() -> UserAnswer.Empty
-                text == EXIT -> UserAnswer.Exit
-                text == HELP -> UserAnswer.Help
+            when (text) {
+                EXIT -> UserAnswer.Exit
+                HELP -> UserAnswer.Help
                 else -> UserAnswer.Valid(text)
             }
 
 
     private fun logNoInputFound(e: Throwable) = logger.log(Level.FINE, "No input found", e)
+
+    private fun clearScannerBuffer() = runBlocking {
+        // If we don't wrap it async, the withTimeoutOrNull won't be able to cancel the computation, because it is
+        // caught in an un-suspendable process!
+        val scannerHasNext = async { scanner.hasNext() }
+        val bufferIsSet = withTimeoutOrNull(100L) { scannerHasNext.await() } ?: false
+        if (bufferIsSet) {
+            scanner.next()
+        }
+    }
 }
 
