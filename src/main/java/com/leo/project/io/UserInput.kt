@@ -48,7 +48,6 @@ class UserInput(private val scanner: Scanner = Scanner(System.`in`)) : InputRead
         } catch (e: IllegalStateException) {
             UserAnswer.Invalid(e)
         } catch (e: NoSuchElementException) {
-            logNoInputFound(e)
             UserAnswer.Invalid(e)
         }
     }
@@ -59,9 +58,6 @@ class UserInput(private val scanner: Scanner = Scanner(System.`in`)) : InputRead
                 HELP -> UserAnswer.Help
                 else -> UserAnswer.Valid(text)
             }
-
-
-    private fun logNoInputFound(e: Throwable) = logger.log(Level.FINE, "No input found", e)
 
     private fun clearScannerBuffer() = runBlocking {
         // If we don't wrap it async, the withTimeoutOrNull won't be able to cancel the computation, because it is

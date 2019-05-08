@@ -11,7 +11,7 @@ import java.util.*
 
 class UserInputTest {
 
-    private val scannerMock: Scanner = mockk()
+    private val scannerMock: Scanner = mockk(relaxed = true)
     private val noSuchElementException = NoSuchElementException("Element not found")
 
     @BeforeEach
@@ -22,8 +22,8 @@ class UserInputTest {
     }
 
     @Test
-    fun `should return EXIT Answer`(){
-        every { scannerMock.next() } returns "exit"
+    fun `should return EXIT Answer`() {
+        every { scannerMock.nextLine() } returns "exit"
 
         val result = UserInput(scannerMock).readEverything()
 
@@ -31,8 +31,8 @@ class UserInputTest {
     }
 
     @Test
-    fun `should return HELP Answer`(){
-        every { scannerMock.next() } returns "help"
+    fun `should return HELP Answer`() {
+        every { scannerMock.nextLine() } returns "help"
 
         val result = UserInput(scannerMock).readEverything()
 
@@ -45,7 +45,7 @@ class UserInputTest {
         @Test
         fun `should return valid (String) Answer - characters and empty space`() {
             val expectedResult = "AbC dE"
-            every { scannerMock.next() } returns expectedResult
+            every { scannerMock.nextLine() } returns expectedResult
 
             val result = UserInput(scannerMock).readEverything()
 
@@ -81,7 +81,7 @@ class UserInputTest {
 
         @Test
         fun `should return invalid (String) Answer with exception, because scanner was closed`() {
-            every { scannerMock.next() } throws scannerClosedException
+            every { scannerMock.nextLine() } throws scannerClosedException
 
             val result = UserInput(scannerMock).readEverything()
 
