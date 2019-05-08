@@ -7,8 +7,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 @SpringBootApplication
 public class Application implements CommandLineRunner {
+
+    private static final Logger LOGGER = Logger.getLogger(Application.class.getSimpleName());
 
     private SystemOutput output = new SystemOutput();
 
@@ -19,16 +24,19 @@ public class Application implements CommandLineRunner {
     }
 
     /**
-     * Entry point of the application process. <br>
-     * @param args
+     * Entry point of the application process
      */
     @Override
     public void run(String... args) {
         output.write(OutputMessages.WELCOME_MESSAGE);
 
-        new Discussion().initiateUntilOver();
-
-        output.write(OutputMessages.BYBY_MESSAGE);
+        try {
+            new Discussion().initiateUntilOver();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Application encountered a serious problem and will shut down.", e);
+        } finally {
+            output.write(OutputMessages.BYBY_MESSAGE);
+        }
     }
 
 }
