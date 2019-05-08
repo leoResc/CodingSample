@@ -7,14 +7,18 @@ sealed class UserAnswer {
     }
 
     data class Invalid(val exception: Throwable) : UserAnswer()
-    object Help : UserAnswer()
+
+    object Help : UserAnswer() //Not implemented so far
+
     object Exit : UserAnswer() {
         override fun canContinue() = false
     }
 
     open fun canContinue() = true
+
     open fun userFriendlyValue(): String = toString()
 }
+
 
 sealed class BooleanAnswer : UserAnswer() { //This inheritance is allowed, because they are in the same file
 
@@ -23,8 +27,8 @@ sealed class BooleanAnswer : UserAnswer() { //This inheritance is allowed, becau
     }
 
     data class Invalid(val exception: Throwable) : BooleanAnswer()
-
 }
+
 
 sealed class NumericAnswer : UserAnswer() {
 
