@@ -4,7 +4,6 @@ import com.leo.project.communication.Repository;
 import com.leo.project.io.SystemOutput;
 import com.leo.project.io.UserAnswer;
 import com.leo.project.objects.Question;
-import com.leo.project.util.OutputMessages;
 import kotlin.Pair;
 import org.jetbrains.annotations.TestOnly;
 
@@ -33,7 +32,7 @@ public class Discussion {
 
     /**
      * Starts a process which goes as long as the user doesn't want to exit. <br>
-     * The only valid way the exit this function and shut down, is by typing {@link OutputMessages#BYBY_MESSAGE}
+     * The only valid way the exit this function early and shut down, is by typing "exit"
      */
     public void initiateUntilOver() {
         if (questions.isEmpty()) {

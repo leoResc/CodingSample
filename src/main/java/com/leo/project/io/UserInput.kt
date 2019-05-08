@@ -60,13 +60,13 @@ class UserInput(private val scanner: Scanner = Scanner(System.`in`)) : InputRead
             }
 
     private fun clearScannerBuffer() = runBlocking {
-        // If we don't wrap it async, the withTimeoutOrNull won't be able to cancel the computation, because it is
+        // If we don't wrap it async, the withTimeoutOrNull won't be able to cancel the computation, because it would be
         // caught in an un-suspendable process!
         val scannerHasNext = async { scanner.hasNext() }
         val bufferIsSet = withTimeoutOrNull(100L) { scannerHasNext.await() } ?: false
-        if (bufferIsSet) {
+        if (bufferIsSet)
             scanner.next()
-        }
+
     }
 }
 
