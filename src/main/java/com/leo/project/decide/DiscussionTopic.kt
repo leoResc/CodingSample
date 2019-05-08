@@ -31,7 +31,7 @@ class DiscussionTopic @JvmOverloads constructor(private val question: Question,
 
         //FIXME: Reduce redundancy and refactor answer object model
         when (answer) {
-            is UserAnswer.Invalid -> logProblematicAnswer(answer.exception)
+            is UserAnswer.Invalid -> return logReadProblemAndRetry(answer.exception)
             is BooleanAnswer.Invalid -> return logReadProblemAndRetry(answer.exception)
             is NumericAnswer.InvalidNumber -> return logReadProblemAndRetry(answer.exception)
 
@@ -40,12 +40,8 @@ class DiscussionTopic @JvmOverloads constructor(private val question: Question,
         return answer
     }
 
-    private fun logProblematicAnswer(throwable: Throwable) {
-        logger.log(Level.FINE, throwable) { "Your answer is 'problematic'." }
-    }
-
     private fun logReadProblemAndRetry(throwable: Throwable): UserAnswer {
-        logProblematicAnswer(throwable)
+        logger.log(Level.FINE, throwable) { "Your answer is 'problematic'." }
         writer.write(COULD_NOT_READ)
         return reachAgreementAndReturnAnswer()
     }

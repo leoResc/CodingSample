@@ -1,5 +1,6 @@
 package com.leo.project.io
 
+import com.leo.project.NO_SUCH_ELEMENT_EXCEPTION
 import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -12,7 +13,6 @@ import java.util.*
 class UserInputTest {
 
     private val scannerMock: Scanner = mockk(relaxed = true)
-    private val noSuchElementException = NoSuchElementException("Element not found")
 
     @BeforeEach
     fun init() {
@@ -111,22 +111,22 @@ class UserInputTest {
 
         @Test
         fun `should return invalid (Int) Answer with exception, because input was not an Int`() {
-            every { scannerMock.nextInt() } throws noSuchElementException
+            every { scannerMock.nextInt() } throws NO_SUCH_ELEMENT_EXCEPTION
 
             val result = UserInput(scannerMock).readInteger()
 
             assertThat(result).isInstanceOf(NumericAnswer.InvalidNumber::class.java)
-            assertThat((result as NumericAnswer.InvalidNumber).exception).isEqualTo(noSuchElementException)
+            assertThat((result as NumericAnswer.InvalidNumber).exception).isEqualTo(NO_SUCH_ELEMENT_EXCEPTION)
         }
 
         @Test
         fun `should return invalid (Boolean) Answer with exception, because fitting element was not found`() {
-            every { scannerMock.nextBoolean() } throws noSuchElementException
+            every { scannerMock.nextBoolean() } throws NO_SUCH_ELEMENT_EXCEPTION
 
             val result = UserInput(scannerMock).readBoolean()
 
             assertThat(result).isInstanceOf(BooleanAnswer.Invalid::class.java)
-            assertThat((result as BooleanAnswer.Invalid).exception).isEqualTo(noSuchElementException)
+            assertThat((result as BooleanAnswer.Invalid).exception).isEqualTo(NO_SUCH_ELEMENT_EXCEPTION)
         }
     }
 
