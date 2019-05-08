@@ -6,11 +6,7 @@ sealed class UserAnswer {
         override fun userFriendlyValue() = value
     }
 
-
     data class Invalid(val exception: Throwable) : UserAnswer()
-
-
-    object Empty : UserAnswer()
     object Help : UserAnswer()
     object Exit : UserAnswer() {
         override fun canContinue() = false
@@ -18,7 +14,6 @@ sealed class UserAnswer {
 
     open fun canContinue() = true
     open fun userFriendlyValue(): String = toString()
-
 }
 
 sealed class BooleanAnswer : UserAnswer() { //This inheritance is allowed, because they are in the same file

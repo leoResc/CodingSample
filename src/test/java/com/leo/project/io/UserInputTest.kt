@@ -22,15 +22,6 @@ class UserInputTest {
     }
 
     @Test
-    fun `should return empty (String) Answer with exception, because fitting element was not found`() {
-        every { scannerMock.next() } throws noSuchElementException
-
-        val result = UserInput(scannerMock).readEverything()
-
-        assertThat(result).isEqualTo(UserAnswer.Empty)
-    }
-
-    @Test
     fun `should return EXIT Answer`(){
         every { scannerMock.next() } returns "exit"
 
