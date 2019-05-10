@@ -13,7 +13,11 @@ class QuestionRepository {
         listOf(
                 BooleanQuestion("Do you feel tired?"),
                 NumericQuestion("How many hours did you spend this week to do sport?"),
-                ProseQuestion("What are you looking forward to today?")
+                ProseQuestion("What are you looking forward to today?"),
+                BooleanQuestion("Are you an expert in anything?"),
+                ProseQuestion("What did you eat today?"),
+                NumericQuestion("How many stars are on the american flag?"),
+                BooleanQuestion("Are you happy?")
         )
     }
 

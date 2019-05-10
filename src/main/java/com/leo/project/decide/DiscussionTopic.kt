@@ -27,17 +27,13 @@ class DiscussionTopic @JvmOverloads constructor(private val question: Question,
 
     fun reachAgreementAndReturnAnswer(): UserAnswer {
         writer.write(question.message)
-        val answer = answerToTheQuestion()
 
-        //FIXME: Reduce redundancy and refactor answer object model
-        when (answer) {
-            is UserAnswer.Invalid -> return logReadProblemAndRetry(answer.exception)
-            is BooleanAnswer.Invalid -> return logReadProblemAndRetry(answer.exception)
-            is NumericAnswer.InvalidNumber -> return logReadProblemAndRetry(answer.exception)
-
+        return when (val answer = answerToTheQuestion()) {
+            is UserAnswer.Invalid -> logReadProblemAndRetry(answer.exception)
+            is BooleanAnswer.Invalid -> logReadProblemAndRetry(answer.exception)
+            is NumericAnswer.InvalidNumber -> logReadProblemAndRetry(answer.exception)
+            else -> answer
         }
-
-        return answer
     }
 
     private fun logReadProblemAndRetry(throwable: Throwable): UserAnswer {

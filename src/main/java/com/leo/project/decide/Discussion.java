@@ -1,5 +1,6 @@
 package com.leo.project.decide;
 
+import com.google.common.collect.Lists;
 import com.leo.project.communication.Repository;
 import com.leo.project.io.SystemOutput;
 import com.leo.project.io.UserAnswer;
@@ -55,7 +56,9 @@ public class Discussion {
             Question question = questionIterator.next();
             userAnswer = new DiscussionTopic(question).reachAgreementAndReturnAnswer();
 
-            discussionOutcomes.add(new Pair<>(question, userAnswer));
+            if (!userAnswer.equals(UserAnswer.Exit.INSTANCE)) { // Answer is invalid since exit is a keyword for shutdown
+                discussionOutcomes.add(new Pair<>(question, userAnswer));
+            }
         }
         while (userAnswer.canContinue() && questionIterator.hasNext());
 
@@ -71,10 +74,16 @@ public class Discussion {
     }
 
     private void writeOutcome(List<Pair<Question, UserAnswer>> discussionOutcomes) {
-        String outcomeAsString = discussionOutcomes.stream()
-                .map(pair -> pair.getFirst().getMessage() + " -> " + pair.getSecond().userFriendlyValue())
-                .collect(Collectors.joining(", ", "[", "]"));
+        String outcomeAsString = Lists.partition(discussionOutcomes, 3).stream()
+                .map(this::singleLineOfOutcome)
+                .collect(Collectors.joining("\n", "[", "]"));
 
-        systemOutput.write("The (saved) outcome of our conversation:\n" + outcomeAsString);
+        systemOutput.write("The (successful) outcome of our conversation:\n" + outcomeAsString);
+    }
+
+    private String singleLineOfOutcome(List<Pair<Question, UserAnswer>> discussionOutcomes) {
+        return discussionOutcomes.stream()
+                .map(pair -> "Q:" + pair.getFirst().getMessage() + " -> A:" + pair.getSecond().userFriendlyValue())
+                .collect(Collectors.joining("; "));
     }
 }
