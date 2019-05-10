@@ -83,7 +83,12 @@
             <artifactId>kotlinx-coroutines-core-common</artifactId>
             <version>1.2.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.27.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

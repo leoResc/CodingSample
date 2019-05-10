@@ -16,6 +16,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 
 class DiscussionTopicTest {
 
@@ -28,14 +30,56 @@ class DiscussionTopicTest {
     }
 
     @Test
-    fun `should return invalid String answer`() { //TODO: fix loop of READ attempts for mock - write own stub
-        val expectedAnswer = UserAnswer.Invalid(NO_SUCH_ELEMENT_EXCEPTION)
+    fun `should return immediately EXIT String answer`() {
+        val expectedAnswer = UserAnswer.Exit
         every { inputMock.readEverything() } returns expectedAnswer
         val question = ProseQuestion("Why are firetrucks red?")
 
         val answer = DiscussionTopic(question, inputMock, outputMock).reachAgreementAndReturnAnswer()
 
         assertThat(answer).isEqualTo(expectedAnswer)
+    }
+
+
+    /**
+     * The {@link Discussion} is over, when the question was answered properly, or EXIT is written. Until then,
+     * it repeats the question and waits for answers.
+     */
+    @Nested
+    inner class MultipleTry {
+
+        @Test
+        fun `should return EXIT answer on second try, after giving invalid String answer on first try`() {
+            //Mockito is used here, because it can mock sequential behaviour. Here it returns first an invalid answer
+            // and on second time a valid/exit one
+            val inputBehaviourMock = mock(InputReader::class.java)
+            `when`(inputBehaviourMock.readEverything())
+                    .thenReturn(UserAnswer.Invalid(NO_SUCH_ELEMENT_EXCEPTION))
+                    .thenReturn(UserAnswer.Exit)
+
+            val question = ProseQuestion("Why are firetrucks red?")
+
+            val answer = DiscussionTopic(question, inputBehaviourMock, outputMock).reachAgreementAndReturnAnswer()
+
+            assertThat(answer).isEqualTo(UserAnswer.Exit)
+        }
+
+        @Test
+        fun `should return Valid answer on second try, after giving invalid String answer on first try`() {
+            val expectedValidAnswer = UserAnswer.Valid("Because its sunday.")
+            //Mockito is used here, because it can mock sequential behaviour. Here it returns first an invalid answer
+            // and on second time a valid/exit one
+            val inputBehaviourMock = mock(InputReader::class.java)
+            `when`(inputBehaviourMock.readEverything())
+                    .thenReturn(UserAnswer.Invalid(NO_SUCH_ELEMENT_EXCEPTION))
+                    .thenReturn(expectedValidAnswer)
+
+            val question = ProseQuestion("Why are firetrucks red?")
+
+            val answer = DiscussionTopic(question, inputBehaviourMock, outputMock).reachAgreementAndReturnAnswer()
+
+            assertThat(answer).isEqualTo(expectedValidAnswer)
+        }
     }
 
     @Nested
@@ -73,8 +117,5 @@ class DiscussionTopicTest {
 
             assertThat(answer).isEqualTo(expectedAnswer)
         }
-
     }
-
-
 }
